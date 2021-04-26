@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 @SuppressWarnings("serial")
 
-public class MainFrame extends JFrame {
+public class Main extends JFrame {
     private static final String FRAME_TITLE = "Клиент мгновенных сообщений";
     private static final int FRAME_MINIMUM_WIDTH = 500;
     private static final int FRAME_MINIMUM_HEIGHT = 500;
@@ -41,7 +41,7 @@ public class MainFrame extends JFrame {
     private final JTextArea textAreaIncoming;
     private final JTextArea textAreaOutgoing;
 
-    public MainFrame() {
+    public Main() {
         super(FRAME_TITLE);
         setMinimumSize(
                 new Dimension(FRAME_MINIMUM_WIDTH, FRAME_MINIMUM_HEIGHT));
@@ -83,7 +83,7 @@ public class MainFrame extends JFrame {
         messagePanel.setLayout(layout2);
         layout2.setHorizontalGroup(layout2.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout2.createParallelGroup(Alignment.TRAILING)
+                .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.TRAILING)
                         .addGroup(layout2.createSequentialGroup()
                                 .addComponent(labelFrom)
                                 .addGap(SMALL_GAP)
@@ -97,7 +97,7 @@ public class MainFrame extends JFrame {
                 .addContainerGap());
         layout2.setVerticalGroup(layout2.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout2.createParallelGroup(Alignment.BASELINE)
+                .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(labelFrom)
                         .addComponent(textFieldFrom)
                         .addComponent(labelTo)
@@ -147,13 +147,13 @@ public class MainFrame extends JFrame {
                                         .getAddress()
                                         .getHostAddress();
 // Выводим сообщение в текстовую область
-                        textAreaIncoming.append(senderName +
-                                " (" + address + "): " +
-                                message + "\n");
+                       // textAreaIncoming.append(senderName +
+                        //        " (" + address + "): " +
+                         //       message + "\n");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(MainFrame.this,
+                    JOptionPane.showMessageDialog(Main.this,
                             "Ошибка в работе сервера", "Ошибка",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -199,24 +199,30 @@ public class MainFrame extends JFrame {
 // Закрываем сокет
             socket.close();
 // Помещаем сообщения в текстовую область вывода
-            textAreaIncoming.append("Я -> " + destinationAddress + ": "
-                    + message + "\n");
+          textAreaIncoming.append("Я -> " + destinationAddress + ": "
+                   + message + "\n");
 // Очищаем текстовую область ввода сообщения
-            textAreaOutgoing.setText("");
+           textAreaOutgoing.setText("");
         } catch (UnknownHostException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(MainFrame.this,
-                    "Не удалось отправить сообщение: узел-адресат не найден","Ошибка", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.this,
+                    "Не удалось отправить сообщение: узел-адресат не найден", "Ошибка", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(MainFrame.this,
+            JOptionPane.showMessageDialog(Main.this,
                     "Не удалось отправить сообщение", "Ошибка",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    
-            public static void MainFrame(String[] args) {
-	// write your code here
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final Main frame = new Main();
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setVisible(true);
+            }
+        });
     }
 }

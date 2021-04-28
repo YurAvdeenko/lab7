@@ -22,9 +22,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 @SuppressWarnings("serial")
 
 public class Main extends JFrame {
+    private boolean turn = true;
+    private ButtonGroup radioButtons = new ButtonGroup ();
     private static final String FRAME_TITLE = "Клиент мгновенных сообщений";
     private static final int FRAME_MINIMUM_WIDTH = 500;
     private static final int FRAME_MINIMUM_HEIGHT = 500;
@@ -71,16 +78,43 @@ public class Main extends JFrame {
         messagePanel.setBorder(
                 BorderFactory.createTitledBorder("Сообщение"));
 // Кнопка отправки сообщения
-        final JButton sendButton = new JButton("Отправить");
-        sendButton.addActionListener(new ActionListener() {
+        final JButton buttonSend = new JButton("Отправить");
+        buttonSend.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                sendMessage();
+            public void actionPerformed(ActionEvent e) {sendMessage();
             }
         });
+
+        final ButtonGroup myButtons = new ButtonGroup();
+
+        JRadioButton radio1 = new JRadioButton ("Вкл.",true);
+        myButtons.add (radio1);
+        radio1.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if(!turn){
+                    turn = true;
+                    textAreaIncoming.append("Клиент включен" + "\n");
+                    buttonSend.setEnabled(true);}
+            }
+        });
+
+        JRadioButton radio2 = new JRadioButton ("Выкл.",true);
+        myButtons.add (radio2);
+        radio2.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if(turn){
+                    turn = false;
+                    textAreaIncoming.append("Клиент выключен" + "\n");
+                    buttonSend.setEnabled(false);}
+            }
+        });
+
 // Компоновка элементов панели "Сообщение"
         final GroupLayout layout2 = new GroupLayout(messagePanel);
         messagePanel.setLayout(layout2);
+
         layout2.setHorizontalGroup(layout2.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -93,8 +127,9 @@ public class Main extends JFrame {
                                 .addGap(SMALL_GAP)
                                 .addComponent(textFieldTo))
                         .addComponent(scrollPaneOutgoing)
-                        .addComponent(sendButton))
+                        .addComponent(buttonSend))
                 .addContainerGap());
+
         layout2.setVerticalGroup(layout2.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -105,17 +140,20 @@ public class Main extends JFrame {
                 .addGap(MEDIUM_GAP)
                 .addComponent(scrollPaneOutgoing)
                 .addGap(MEDIUM_GAP)
-                .addComponent(sendButton)
+                .addComponent(buttonSend)
                 .addContainerGap());
+
 // Компоновка элементов фрейма
         final GroupLayout layout1 = new GroupLayout(getContentPane());
         setLayout(layout1);
+
         layout1.setHorizontalGroup(layout1.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout1.createParallelGroup()
                         .addComponent(scrollPaneIncoming)
                         .addComponent(messagePanel))
                 .addContainerGap());
+
         layout1.setVerticalGroup(layout1.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(scrollPaneIncoming)
@@ -146,10 +184,14 @@ public class Main extends JFrame {
                                         .getRemoteSocketAddress())
                                         .getAddress()
                                         .getHostAddress();
+                        // Закрываем соединение
+                        socket.close();
 // Выводим сообщение в текстовую область
-                       // textAreaIncoming.append(senderName +
-                        //        " (" + address + "): " +
-                         //       message + "\n");
+
+                        if (turn==true){
+                            textAreaIncoming.append(senderName +
+                                    " (" + address + "):" + message + "\n");
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -159,6 +201,11 @@ public class Main extends JFrame {
                 }
             }
         }).start();
+    }
+
+    private Object newJScrollPane(JTextArea textAreaOutgoing2) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private void sendMessage() {
@@ -199,7 +246,7 @@ public class Main extends JFrame {
 // Закрываем сокет
             socket.close();
 // Помещаем сообщения в текстовую область вывода
-          textAreaIncoming.append("Я -> " + destinationAddress + ": "
+          textAreaIncoming.append("Я " + " (" + destinationAddress+ "):" + ": "
                    + message + "\n");
 // Очищаем текстовую область ввода сообщения
            textAreaOutgoing.setText("");
